@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../../services/authService.js';
 import Header from '../../components/Header.jsx';
 
@@ -21,6 +21,13 @@ function CredentialsForm() {
     const [error, setError] = useState('');
     const [accessToken, setAccessToken] = useState(null);
 
+    const location = useLocation();
+    const [stateMessage, setStateMessage] = useState('');
+    useEffect(() => {
+        if (location.state?.message)
+            setStateMessage(location.state.message);
+    }, [location]);
+
     const navigate = useNavigate();
 
     async function handleLogin() {
@@ -33,25 +40,28 @@ function CredentialsForm() {
                 console.log(`Login successful: `, response);
                 setAccessToken(response.data.accessToken);
             } else {
-                console.log(response.status);
+                console.log(response);
                 throw new Error('Invalid credentials');
             }
         } catch (error) {
             setError(`Login failed. Check your credentials.`);
             console.error(`Login error: `, error);
-        } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
         if (accessToken) {
-            navigate('/dashboard');
+            setTimeout(() => {
+                setLoading(false);
+                navigate('/dashboard', { state: { message: "Registration successful! Please log in." } });
+            }, 2000);
         }
     }, [accessToken]);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "250px" }}>
+            {stateMessage && <p style={{ color: "green"  }}>{stateMessage}</p>}
             <label>Username:</label>
             <input type="text" onChange={(e) => setUsername(e.target.value)} />
             <label>Password:</label>

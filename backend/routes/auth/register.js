@@ -9,7 +9,7 @@ router.post('/', async (req, res, next) => {
     try {
 
         // Get request body fields
-        const { email, password, firstName, lastName } = req.body;
+        let { email, password, firstName, lastName } = req.body;
         email = email?.trim().toLowerCase();
         firstName = firstName?.trim();
         lastName = lastName?.trim();
