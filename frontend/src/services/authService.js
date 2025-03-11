@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useEffect } from 'react';
 
 export async function login(username, password) {
     if (!username || !password) {
@@ -8,7 +9,7 @@ export async function login(username, password) {
 
     try {
         const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL}/login`,
+            `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
             { email: username, password },
             { headers: { "Content-Type": "application/json" } }
         );
@@ -16,6 +17,6 @@ export async function login(username, password) {
         return response;
     } catch (error) {
         console.error("Login error: ", error.message);
-        return { success: false, message: "An error occurred" };
+        return error.response;
     }
 }
