@@ -1,0 +1,20 @@
+import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/public/Home.jsx';
+import Login from './pages/public/Login.jsx';
+import Register from './pages/public/Register.jsx';
+
+import Dashboard from './pages/protected/Dashboard.jsx';
+
+function App() {
+  return (
+      <Routes>
+          <Route index element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+  );
+}
+
+export default App;
