@@ -8,6 +8,7 @@ function Dashboard() {
         <div>
             <Header />
             <h2>Dashboard</h2>
+            <h3>Welcome, {}!</h3>
         </div>
     );
 };

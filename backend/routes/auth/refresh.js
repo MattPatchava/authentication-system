@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-const verifyRefreshToken = require('../../middleware/authMiddleware.js');
+const verifyRefreshToken = require('../../middleware/verifyAccessToken.js');
 
 router.post('/', async (req, res, next) => {
     try {

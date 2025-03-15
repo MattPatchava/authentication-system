@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { login } from '../../services/authService.js';
 import Header from '../../components/Header.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 function Login() {
     return (
@@ -19,8 +19,16 @@ function CredentialsForm() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [accessToken, setAccessToken] = useState(null);
+    const { accessToken, login, logout } = useContext(AuthContext);
 
+    const handleLogin = async () => {
+        if (!username || !password) {
+                setError("Please enter both username and password.");
+        }
+        console.log(`Sending login request with username ${username} and password ${password}`);
+        const response = await login(username, password);
+    }
+    
     const location = useLocation();
     const [stateMessage, setStateMessage] = useState('');
     useEffect(() => {
@@ -29,32 +37,12 @@ function CredentialsForm() {
     }, [location]);
 
     const navigate = useNavigate();
-
-    async function handleLogin() {
-        setLoading(true);
-        setError('');
-
-        try {
-            const response = await login(username, password);
-            if (response.status === 200) {
-                console.log(`Login successful: `, response);
-                setAccessToken(response.data.accessToken);
-            } else {
-                console.log(response);
-                throw new Error('Invalid credentials');
-            }
-        } catch (error) {
-            setError(`Login failed. Check your credentials.`);
-            console.error(`Login error: `, error);
-            setLoading(false);
-        }
-    }
-
+    
     useEffect(() => {
         if (accessToken) {
             setTimeout(() => {
                 setLoading(false);
-                navigate('/dashboard', { state: { message: "Registration successful! Please log in." } });
+                navigate('/dashboard', { state: { message: "Logged in successfully." } });
             }, 2000);
         }
     }, [accessToken]);
