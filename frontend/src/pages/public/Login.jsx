@@ -15,18 +15,19 @@ function Login() {
 
 function CredentialsForm() {
 
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { accessToken, login, logout } = useContext(AuthContext);
 
     const handleLogin = async () => {
-        if (!username || !password) {
-                setError("Please enter both username and password.");
+        if (!email || !password) {
+                setError("Please enter both email and password.");
         }
-        console.log(`Sending login request with username ${username} and password ${password}`);
-        const response = await login(username, password);
+        console.log(`Sending login request with email ${email} and password ${password}`);
+        setLoading(true);
+        const response = await login(email, password);
     }
     
     const location = useLocation();
@@ -50,8 +51,8 @@ function CredentialsForm() {
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "250px" }}>
             {stateMessage && <p style={{ color: "green"  }}>{stateMessage}</p>}
-            <label>Username:</label>
-            <input type="text" onChange={(e) => setUsername(e.target.value)} />
+            <label>Email:</label>
+            <input type="text" onChange={(e) => setEmail(e.target.value)} />
             <label>Password:</label>
             <input type="password" onChange={(e) => setPassword(e.target.value)}/>
             <button onClick={handleLogin} disabled={loading} style={{ alignSelf: "start" }}>

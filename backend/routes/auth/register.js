@@ -50,6 +50,7 @@ router.post('/', async (req, res, next) => {
 
 // Final catch-all error handler
 router.use((err, req, res, next) => {
+    console.error(err.message);
     res.status(500).json({ message: "Internal Server Error" });
 });
 
