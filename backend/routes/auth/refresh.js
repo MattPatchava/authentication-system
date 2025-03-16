@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-const verifyRefreshToken = require('../../middleware/verifyAccessToken.js');
+const verifyAccessToken = require('../../middleware/verifyAccessToken.js');
 
-router.post('/', async (req, res, next) => {
+router.post('/', verifyAccessToken, async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
 
