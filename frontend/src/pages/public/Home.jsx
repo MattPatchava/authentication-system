@@ -6,17 +6,17 @@ import { useFetchUser } from '../../hooks/useFetchUser.js';
 import axios from 'axios';
 
 function Home() {
-    const { accessToken, setAccessToken, login, logout } = useContext(AuthContext);
+    const { accessToken, setAccessToken, login, logout, user } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const user = useFetchUser(false);
+    const { loading } = useFetchUser(false);
     console.log(`User state in Home: ${user}`);
 
     return (
         <div>
             <Header />
             <h2>Home Page</h2>
-            {user ? <LoggedInView /> : <LoggedOutView />}
+            {loading ? <p>Loading...</p> : user ? <LoggedInView /> : <LoggedOutView />}
         </div>
     );
 

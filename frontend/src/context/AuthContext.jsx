@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [accessToken, setAccessToken] = useState(null);
+    const [user, setUser] = useState(null);
 
     const login = async (email, password) => {
         try {
@@ -24,6 +25,7 @@ export function AuthProvider({ children }) {
 
     const logout = () => {
         setAccessToken(null);
+        setUser(null);
         axios.post(import.meta.env.VITE_API_BASE_URL + '/auth/logout', {}, { withCredentials: true });
     };
 
@@ -50,7 +52,7 @@ export function AuthProvider({ children }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ accessToken, login, logout }}>
+        <AuthContext.Provider value={{ accessToken, login, logout, user, setUser }}>
             { children }
         </AuthContext.Provider>
     );

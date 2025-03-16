@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export function useFetchUser(redirectOnLogout = true) {
-    const [user, setUser] = useState(null);
-    const { accessToken, setAccessToken, logout } = useContext(AuthContext);
+    const { accessToken, setAccessToken, logout, user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     async function fetchUserData() {
         try {
@@ -20,6 +20,7 @@ export function useFetchUser(redirectOnLogout = true) {
                 }
             );
 
+            console.log(`Fetched user:`, response.data);
             setUser(response.data);
         } catch (error) {
             if (error.response?.status === 401) {
@@ -40,18 +41,27 @@ export function useFetchUser(redirectOnLogout = true) {
                 console.error(error);
                 handleLogout();
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     function handleLogout() {
         logout();
         setUser(null);
+        setLoading(false);
         if (redirectOnLogout) navigate('/login');
     }
 
     useEffect(() => {
+        console.log("useFetchUser running. accessToken:", accessToken);
+        if (!accessToken) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
         fetchUserData();
-    }, []);
+    }, [accessToken]);
 
-    return user;
+    return { user, loading };
 }

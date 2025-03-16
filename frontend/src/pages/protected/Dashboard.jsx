@@ -6,17 +6,17 @@ import { useFetchUser } from '../../hooks/useFetchUser.js';
 import axios from 'axios';
 
 function Dashboard() {
-//    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const { accessToken, setAccessToken, login, logout } = useContext(AuthContext);
+    const { accessToken, setAccessToken, login, logout, user, setUser } = useContext(AuthContext);
 
-    const user = useFetchUser();
+    const { loading } = useFetchUser();
+    console.log(`Dashboard user state: ${user}`)
 
     return (
         <div>
             <Header />
             <h2>Dashboard</h2>
-            {user ? <h3>Welcome, {user.firstName}!</h3> : <p>Loading...</p>}
+            {loading ? <p>Loading...</p> : user ? <h3>Welcome, {user.firstName}!</h3> : <p>User not found.</p>}
             {user && <Link to='/' onClick={logout}>Log Out</Link>}
         </div>
     );
