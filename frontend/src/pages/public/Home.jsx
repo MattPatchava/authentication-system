@@ -15,28 +15,8 @@ function Home() {
     return (
         <div>
             <Header />
-            <h2>Home Page</h2>
-            {loading ? <p>Loading...</p> : user ? <LoggedInView /> : <LoggedOutView />}
         </div>
     );
-
-    function LoggedOutView() {
-        return (
-            <div>
-                <Link to="/login">Login</Link> | <Link to="/register">Register</Link>
-            </div>
-        );
-    }
-
-    function LoggedInView() {
-        return (
-            <div>
-                <Link to="/dashboard">Go to Dashboard</Link>
-                <br /><br />
-                {user && <Link to='/' onClick={logout}>Log Out</Link>}
-            </div>
-        );
-    }
 
 };
 

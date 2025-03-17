@@ -7,21 +7,23 @@ function Login() {
     return (
         <div>
             <Header />
-            <h2>Login Page</h2>
-            <CredentialsForm />
+            <div className="m-4">
+                <CredentialsForm />
+            </div>
         </div>
     );
 };
 
 function CredentialsForm() {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { accessToken, login, logout } = useContext(AuthContext);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
         if (!email || !password) {
             setError("Please enter both email and password.");
             return;
@@ -31,13 +33,12 @@ function CredentialsForm() {
 
         const timeoutId = setTimeout(() => {
             setLoading(false);
-            setError('Server is not responding. Please try again later.')
+            setError('Server is not responding. Please try again later.');
         }, 2000);
 
         try {
             const response = await login(email, password);
             clearTimeout(timeoutId);
-
         } catch (error) {
             clearTimeout(timeoutId);
 
@@ -52,10 +53,11 @@ function CredentialsForm() {
 
             setLoading(false);
         } 
-    }
+    };
     
     const location = useLocation();
     const [stateMessage, setStateMessage] = useState('');
+    
     useEffect(() => {
         if (location.state?.message)
             setStateMessage(location.state.message);
@@ -73,18 +75,42 @@ function CredentialsForm() {
     }, [accessToken]);
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "250px" }}>
-            {stateMessage && <p style={{ color: "green"  }}>{stateMessage}</p>}
+        <form 
+            onSubmit={(e) => handleLogin(e)} 
+            className="flex flex-col gap-4 p-6 bg-white shadow-md rounded-lg w-96"
+        >
+            {stateMessage && <p style={{ color: "green" }}>{stateMessage}</p>}
+            
             <label>Email:</label>
-            <input type="text" onChange={(e) => setEmail(e.target.value)} />
+            <input 
+                className="input" 
+                type="text" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+            />
+
             <label>Password:</label>
-            <input type="password" onChange={(e) => setPassword(e.target.value)}/>
-            <button onClick={handleLogin} disabled={loading} style={{ alignSelf: "start" }}>
+            <input 
+                className="input" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            
+            <button 
+                type="submit" 
+                disabled={loading} 
+                className="btn btn-primary"
+            >
                 {loading ? "Logging in..." : "Login"}
             </button>
+
             {error && <p style={{ color: "red", margin: "0" }}>{error}</p>}
-            <p style={{ margin: "0"  }}>Don't have an account? <Link to="/register">Register here.</Link></p>
-        </div>
+
+            <p style={{ margin: "0" }}>
+                Don't have an account? <Link to="/register" className="text-blue-500 underline hover:text-blue-700">Register here.</Link>
+            </p>
+        </form>
     );
 };
 

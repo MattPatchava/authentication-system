@@ -7,8 +7,9 @@ function Register() {
     return (
         <div>
             <Header />
-            <h2>Register Page</h2>
-            <RegisterForm />
+            <div className="m-4">
+                <RegisterForm />
+            </div>
         </div>
     );
 };
@@ -26,7 +27,9 @@ function RegisterForm() {
     
     const navigate = useNavigate();
 
-    async function handleRegister() {
+    async function handleRegister(e) {
+        e.preventDefault();
+
         setLoading(true);
         setError('');
         setSuccessMessage('');
@@ -52,23 +55,29 @@ function RegisterForm() {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "250px" }}>
+        <form 
+            onSubmit={(e) => handleRegister(e)}
+            className="flex flex-col gap-4 p-6 bg-white shadow-md rounded-lg w-96">
             <label>Email:</label>
-            <input type="text" onChange={(e) => setEmail(e.target.value)} />
-            <label>Password:</label>
-            <input type="password" onChange={(e) => setPassword(e.target.value)}/>
-            <label>Confirm Password:</label>
-            <input type="password" onChange={(e) => setConfirmPassword(e.target.value)}/>
+            <input className="input" type="text" onChange={(e) => setEmail(e.target.value)} />
             <label type="text">First Name:</label>
-            <input type="text" onChange={(e) => setFirstName(e.target.value)}/>
+            <input className="input" type="text" onChange={(e) => setFirstName(e.target.value)}/>
             <label type="text">Last Name:</label>
-            <input type="text" onChange={(e) => setLastName(e.target.value)}/>
-            <button onClick={handleRegister} disabled={loading} style={{ alignSelf: "start" }}>
+            <input className="input" type="text" onChange={(e) => setLastName(e.target.value)}/>
+            <label>Password:</label>
+            <input className="input" type="password" onChange={(e) => setPassword(e.target.value)}/>
+            <label>Confirm Password:</label>
+            <input className="input" type="password" onChange={(e) => setConfirmPassword(e.target.value)}/>
+            <button 
+                type="submit"
+                disabled={loading} 
+                className="btn btn-primary"
+            >
                 {loading ? "Submitting data..." : "Register"}
             </button>
             {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-            <p style={{ margin: "0" }}>Already have an account? <Link to="/login">Login here.</Link></p>
-        </div>
+            <p style={{ margin: "0" }}>Already have an account? <Link to="/login" className="text-blue-500 underline hover:text-blue-700">Login here.</Link></p>
+        </form>
     );
 };
 

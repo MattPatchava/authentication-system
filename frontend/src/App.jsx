@@ -10,15 +10,17 @@ import Dashboard from './pages/protected/Dashboard.jsx';
 
 function App() {
   return (
-      <AuthProvider>
-          <Routes>
-              <Route index element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="*" element={<NotFound />} />
-          </Routes>
-      </AuthProvider>
+      <div className="min-h-screen bg-gray-100">
+          <AuthProvider>
+              <Routes>
+                  <Route index element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="*" element={<NotFound />} />
+              </Routes>
+          </AuthProvider>
+      </div>
   );
 }
 

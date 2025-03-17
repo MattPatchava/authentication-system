@@ -15,9 +15,9 @@ function Dashboard() {
     return (
         <div>
             <Header />
-            <h2>Dashboard</h2>
-            {loading ? <p>Loading...</p> : user ? <h3>Welcome, {user.firstName}!</h3> : <p>User not found.</p>}
-            {user && <Link to='/' onClick={logout}>Log Out</Link>}
+            <div className="m-4">
+                {loading ? <p>Loading...</p> : user ? <h1 className="text-5xl font-bold text-gray-800 text-center drop-shadow-lg">Welcome, {user.firstName}!</h1> : <p>User not found.</p>}
+            </div>
         </div>
     );
 };
