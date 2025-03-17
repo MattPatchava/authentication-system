@@ -4,13 +4,28 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import { useNavigate, Link } from 'react-router-dom';
 import { useFetchUser } from '../../hooks/useFetchUser.js';
 import axios from 'axios';
+import confetti from 'canvas-confetti';
 
 function Dashboard() {
     const navigate = useNavigate();
     const { accessToken, setAccessToken, login, logout, user, setUser } = useContext(AuthContext);
 
     const { loading } = useFetchUser();
-    console.log(`Dashboard user state: ${user}`)
+    console.log("Dashboard user state:", user )
+
+    const fireConfetti = () => {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    };
+
+    useEffect(() => {
+        if (!loading && user) {
+            fireConfetti();
+        }
+    }, [loading, user]);
 
     return (
         <div>

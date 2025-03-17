@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.14",
     "axios": "^1.8.2",
+    "canvas-confetti": "^1.9.3",
     "daisyui": "^5.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

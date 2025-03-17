@@ -8,12 +8,13 @@ function Header() {
 
     const { loading } = useFetchUser(false);
 
-
+    const loggedOutHeading = "🔒 Authentication System 🔒";
+    const loggedInHeading = "🔓 Authentication System 🔓";
 
     return (
         <div className="navbar bg-base-100 shadow-sm h-16">
             <div className="flex-1">
-              <Link to='/' className="btn btn-ghost text-xl">🔒 Authentication System 🔒</Link>
+                <Link to='/' className="btn btn-ghost text-xl">{user ? loggedInHeading : loggedOutHeading}</Link>
           </div>
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
