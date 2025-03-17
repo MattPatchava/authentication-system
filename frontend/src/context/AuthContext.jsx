@@ -19,7 +19,10 @@ export function AuthProvider({ children }) {
             return response; 
         } catch (error) {
             console.error(error);
-            return error.response;
+            if (!error.response)
+                throw new Error("Network Error: Could not connect to the server.");
+
+            throw error;
         }
     };
 

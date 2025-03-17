@@ -23,11 +23,35 @@ function CredentialsForm() {
 
     const handleLogin = async () => {
         if (!email || !password) {
-                setError("Please enter both email and password.");
+            setError("Please enter both email and password.");
+            return;
         }
         console.log(`Sending login request with email ${email} and password ${password}`);
         setLoading(true);
-        const response = await login(email, password);
+
+        const timeoutId = setTimeout(() => {
+            setLoading(false);
+            setError('Server is not responding. Please try again later.')
+        }, 2000);
+
+        try {
+            const response = await login(email, password);
+            clearTimeout(timeoutId);
+
+        } catch (error) {
+            clearTimeout(timeoutId);
+
+            if (!error.response)
+                setError("Could not connect to the server.");
+            else if (error.response.status === 401)
+                setError("Invalid credentials. Try again.");
+            else if (error.response.status >= 500)
+                setError('Server error. Try again later.');
+            else
+                setError(error.response.data?.message || "An unknown error occurred.");
+
+            setLoading(false);
+        } 
     }
     
     const location = useLocation();
@@ -44,7 +68,7 @@ function CredentialsForm() {
             setTimeout(() => {
                 setLoading(false);
                 navigate('/dashboard', { state: { message: "Logged in successfully." } });
-            }, 2000);
+            }, 750);
         }
     }, [accessToken]);
 

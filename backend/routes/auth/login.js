@@ -7,7 +7,6 @@ const User = require('../../models/User.js');
 const jwt = require('jsonwebtoken');
 
 router.post('/', async (req, res, next) => {
-
     try {
         const { email, password } = req.body;
 
@@ -21,7 +20,7 @@ router.post('/', async (req, res, next) => {
         const isPasswordMatch = await isValidCredentials(password, user);
 
         if (!isPasswordMatch)
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(401).json({ message: "Invalid credentials" });
 
         // Valid credentials received
 
