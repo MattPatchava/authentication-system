@@ -11,11 +11,11 @@ router.post('/', verifyAccessToken, async (req, res, next) => {
         if (!refreshToken)
             res.status(401).json({ message: "No refresh token provided" });
 
-        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
         const newAccessToken = jwt.sign(
             { userId: decoded.userId },
-            process.env.JWT_SECRET,
+            process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "15m" }
         );
 

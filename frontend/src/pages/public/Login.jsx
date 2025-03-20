@@ -46,6 +46,8 @@ function CredentialsForm() {
                 setError("Could not connect to the server.");
             else if (error.response.status === 401)
                 setError("Invalid credentials. Try again.");
+            else if (error.response.status === 404)
+                setError("User not found. Check the username and try again.");
             else if (error.response.status >= 500)
                 setError('Server error. Try again later.');
             else

@@ -20,6 +20,7 @@ const authRoutes = require('./routes/auth/authRouter.js');
 app.use('/auth', authRoutes);
 
 const PORT = process.env.SERVER_PORT;
-app.listen(PORT, "localhost", () => {
-    console.log(`Server listening on port ${PORT}`);
+const INTERFACE = process.env.SERVER_IP;
+app.listen(PORT, INTERFACE, () => {
+    console.log(`Server listening on ${INTERFACE}:${PORT}`);
 });

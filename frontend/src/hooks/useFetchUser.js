@@ -14,8 +14,7 @@ export function useFetchUser(redirectOnLogout = true) {
                 import.meta.env.VITE_API_BASE_URL + '/auth/profile',
                 {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
+                        'Authorization': `Bearer ${accessToken}`
                     }
                 }
             );
