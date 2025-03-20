@@ -2,14 +2,12 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-const verifyAccessToken = require('../../middleware/verifyAccessToken.js');
-
-router.post('/', verifyAccessToken, async (req, res, next) => {
+router.post('/', async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken)
-            res.status(401).json({ message: "No refresh token provided" });
+            return res.status(401).json({ message: "No refresh token provided" });
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
@@ -19,7 +17,7 @@ router.post('/', verifyAccessToken, async (req, res, next) => {
             { expiresIn: "15m" }
         );
 
-        res
+        return res
             .status(200)
             .json({ accessToken: newAccessToken });
             

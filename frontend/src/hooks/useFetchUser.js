@@ -1,66 +1,66 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
 
 export function useFetchUser(redirectOnLogout = true) {
-    const { accessToken, setAccessToken, logout, user, setUser } = useContext(AuthContext);
+    const { accessToken, setAccessToken, user, setUser, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
-    async function fetchUserData() {
-        try {
-            const response = await axios.get(
-                import.meta.env.VITE_API_BASE_URL + '/auth/profile',
-                {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                }
-            );
+    useEffect(() => {
+        async function fetchData() {
 
-            console.log(`Fetched user:`, response.data);
-            setUser(response.data);
-        } catch (error) {
-            if (error.response?.status === 401) {
-                try {
-                    const refreshResponse = await axios.post(
-                        import.meta.env.VITE_API_BASE_URL + '/auth/refresh', {},
-                        { withCredentials: true }
-                    );
+            async function refreshAccessToken() {
+                const response = await axios.post(
+                    '/auth/refresh',
+                    {},
+                    { withCredentials: true }
+                );
 
-                    const newAccessToken = refreshResponse.data.accessToken;
-                    setAccessToken(newAccessToken);
-                    await fetchUserData();
-                } catch (refreshError) {
-                    console.error("Refresh token expired or invalid", refreshError);
-                    handleLogout();
-                }
-            } else {
-                console.error(error);
+                console.log("Refresh access token response", response.data);
+                setAccessToken(response.data.accessToken);
+            }
+
+            async function fetchUser() {
+
+                const response = await axios.get(
+                    '/auth/profile',
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                        withCredentials: true
+                    },
+                );
+                console.log(`Fetched User`, response.data);
+                setUser(response.data);
+                setLoading(false);
+            }
+
+            function handleLogout() {
+                logout();
+                setLoading(false);
+            }
+
+            try {
+                if (!accessToken) await refreshAccessToken();
+            } catch (refreshAccessTokenError) {
+                console.error("Error:", refreshAccessTokenError);
                 handleLogout();
             }
-        } finally {
-            setLoading(false);
-        }
-    }
 
-    function handleLogout() {
-        logout();
-        setUser(null);
-        setLoading(false);
-        if (redirectOnLogout) navigate('/login');
-    }
+            try {
+                if (accessToken) await fetchUser();
+            } catch (error) {
+                console.error("Error:", error);
+                handleLogout();
+            }
 
-    useEffect(() => {
-        console.log("useFetchUser running. accessToken:", accessToken);
-        if (!accessToken) {
-            setUser(null);
-            setLoading(false);
-            return;
         }
-        fetchUserData();
+
+        fetchData();
     }, [accessToken]);
 
-    return { user, loading };
+        return loading;
 }
