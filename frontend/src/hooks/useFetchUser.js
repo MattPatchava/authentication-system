@@ -1,66 +1,60 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
 
-export function useFetchUser(redirectOnLogout = true) {
-    const { accessToken, setAccessToken, logout, user, setUser } = useContext(AuthContext);
+export function useFetchUser() {
+    const { accessToken, setAccessToken, user, setUser, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
-    async function fetchUserData() {
-        try {
-            const response = await axios.get(
-                import.meta.env.VITE_API_BASE_URL + '/auth/profile',
-                {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
+    useEffect(() => {
+        async function fetchData() {
+
+            async function refreshAccessToken() {
+                const response = await axios.post(
+                    import.meta.env.VITE_API_BASE_URL + '/auth/refresh',
+                    {},
+                    { withCredentials: true }
+                );
+
+                const newToken = response.data.accessToken;
+                setAccessToken(newToken);
+                await fetchUser(newToken);
+            }
+
+            async function fetchUser(newAccessToken) {
+                const user = await axios.get(
+                    import.meta.env.VITE_API_BASE_URL + '/auth/profile',
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${newAccessToken}`
+                        },
+                        withCredentials: true
                     }
-                }
-            );
+                );
 
-            console.log(`Fetched user:`, response.data);
-            setUser(response.data);
-        } catch (error) {
-            if (error.response?.status === 401) {
-                try {
-                    const refreshResponse = await axios.post(
-                        import.meta.env.VITE_API_BASE_URL + '/auth/refresh', {},
-                        { withCredentials: true }
-                    );
+                setUser(user.data);
+            }
 
-                    const newAccessToken = refreshResponse.data.accessToken;
-                    setAccessToken(newAccessToken);
-                    await fetchUserData();
-                } catch (refreshError) {
-                    console.error("Refresh token expired or invalid", refreshError);
-                    handleLogout();
-                }
-            } else {
-                console.error(error);
+            function handleLogout() {
+                logout();
+                setLoading(false);
+            }
+
+            try {
+                if (!accessToken) await refreshAccessToken();
+                else await fetchUser(accessToken);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error:", error);
                 handleLogout();
             }
-        } finally {
-            setLoading(false);
         }
-    }
 
-    function handleLogout() {
-        logout();
-        setUser(null);
-        setLoading(false);
-        if (redirectOnLogout) navigate('/login');
-    }
 
-    useEffect(() => {
-        console.log("useFetchUser running. accessToken:", accessToken);
-        if (!accessToken) {
-            setUser(null);
-            setLoading(false);
-            return;
-        }
-        fetchUserData();
-    }, [accessToken]);
+        fetchData();
+    }, []);
 
-    return { user, loading };
+    return loading;
 }
