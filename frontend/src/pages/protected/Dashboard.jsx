@@ -10,7 +10,7 @@ function Dashboard() {
     const navigate = useNavigate();
     const { accessToken, setAccessToken, login, logout, user, setUser } = useContext(AuthContext);
 
-    const { loading } = useFetchUser();
+    const { loading } = useFetchUser(true);
     console.log("Dashboard user state:", user )
 
     const fireConfetti = () => {

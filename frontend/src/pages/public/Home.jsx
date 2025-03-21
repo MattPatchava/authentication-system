@@ -9,7 +9,7 @@ function Home() {
     const { accessToken, setAccessToken, login, logout, user } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const { loading } = useFetchUser();
+    const { loading } = useFetchUser(false);
     console.log(`User state in Home: ${user}`);
 
     return (

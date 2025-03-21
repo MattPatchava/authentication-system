@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
 
-export function useFetchUser() {
+export function useFetchUser(redirectOnLogout = false) {
     const { accessToken, setAccessToken, user, setUser, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -40,6 +40,7 @@ export function useFetchUser() {
             function handleLogout() {
                 logout();
                 setLoading(false);
+                if (redirectOnLogout) navigate('/login', { state: { message: "Session expired. Please login again." } })
             }
 
             try {
