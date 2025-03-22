@@ -4,7 +4,7 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
-    created_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 GRANT ALL ON ALL TABLES IN SCHEMA public TO auth_app_user;
