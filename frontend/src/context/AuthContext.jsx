@@ -26,10 +26,10 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
         setAccessToken(null);
         setUser(null);
-        axios.post(import.meta.env.VITE_API_BASE_URL + '/auth/logout', {}, { withCredentials: true });
+        await axios.post(import.meta.env.VITE_API_BASE_URL + '/auth/logout', {}, { withCredentials: true });
     };
 
     const refreshAccessToken = async () => {

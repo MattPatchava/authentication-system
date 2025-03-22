@@ -34,6 +34,11 @@ function Header() {
         );
     }
 
+    async function handleLogout() {
+        await logout();
+        navigate('/');
+    }
+
     function LoggedInLinks() {
         return (
             <>
