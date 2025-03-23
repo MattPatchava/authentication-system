@@ -5,6 +5,24 @@ const verifyAccessToken = require('../../middleware/verifyAccessToken.js');
 
 const pool = require('../../config/postgres.js');
 
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Get user profile
+ *     description: Returns the authenticated user's profile.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile returned
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get('/', verifyAccessToken, async (req, res, next) => {
     try {
         const response = await pool.query(

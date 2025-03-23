@@ -6,6 +6,64 @@ const jwt = require('jsonwebtoken');
 
 const pool = require('../../config/postgres.js');
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Authenticates user, returns access token and sets refresh token cookie
+ *     description: Validates user credentials and returns a short-lived access token in the response body and a long-lived refresh token as a secure httpOnly cookie.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: yourPassword123
+ *     responses:
+ *       200:
+ *         description: Login successful, access token returned, refresh token set as cookie
+ *         headers:
+ *           Set-Cookie:
+ *             description: |
+ *               Refresh token cookie.
+ *               - Name: `refreshToken`
+ *               - httpOnly: true
+ *               - secure: true
+ *               - sameSite: None
+ *               - maxAge: 7 days
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+ *       400:
+ *         description: Email or password not provided
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', async (req, res, next) => {
     try {
         const { email, password } = req.body;

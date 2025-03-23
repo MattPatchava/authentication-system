@@ -12,6 +12,11 @@ app.use(cors({
 
 const pool = require('./config/postgres.js');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swaggerConfig.js');
+console.log('Swagger paths:', swaggerSpec.paths);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(express.json());
 app.use(cookieParser());
 

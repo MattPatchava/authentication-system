@@ -4,6 +4,48 @@ const router = express.Router()
 const bcrypt = require('bcryptjs');
 const pool = require('../../config/postgres.js');
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register new user
+ *     description: Creates a new user account and stores it in the database.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - firstName
+ *               - lastName
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: strongPassword123
+ *               firstName:
+ *                 type: string
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
+ *     responses:
+ *       201:
+ *         description: New user created
+ *       400:
+ *         description: Missing fields or invalid password
+ *       409:
+ *         description: Email already exists
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post('/', async (req, res, next) => {
 
     try {
