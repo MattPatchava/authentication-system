@@ -1,48 +1,47 @@
 # Full-Stack Authentication System
 
-This is a full-stack authentication system built using Node.js, Express, MongoDB, React, and Vite. It includes user registration, login, JWT-based authentication, refresh tokens, and protected routes.
+This is a full-stack authentication system built using Node.js, Express, PostgreSQL, React, and Vite. It includes user registration, login, JWT-based authentication, refresh tokens, and protected routes.
 
-## Project Structure
+## Project Structure (Node.js + Express + PostgreSQL / React + Vite)
+
+### Backend
 
 ```
-project-root/
-│── backend/               # Express.js backend
-│   ├── config/            # Database connection setup
-│   ├── middleware/        # Custom middleware
-│   ├── models/            # Mongoose models
-│   ├── routes/            # API routes
-│   │   └── auth/          # Authentication routes
-│   ├── server.js          # Backend entry point
-│   ├── package.json       # Backend dependencies
-│   ├── .gitignore         # Backend-specific gitignore
-│
-│── frontend/              # React frontend (Vite + Tailwind CSS)
-│   ├── src/               # React source files
-│   │   ├── components/    # Reusable UI components
-│   │   ├── context/       # React Context for authentication state
-│   │   ├── hooks/         # Custom hooks
-│   │   ├── pages/         # Page components
-│   │   ├── services/      # API calls and authentication logic
-│   │   ├── main.jsx       # Frontend entry point
-│   │   ├── App.jsx        # Root component
-│   ├── vite.config.js     # Vite configuration
-│   ├── tailwind.config.js # Tailwind CSS configuration
-│   ├── package.json       # Frontend dependencies
-│   ├── .gitignore         # Frontend-specific gitignore
-│
-│── README.md              # High-level project documentation
+backend/
+├── config/           # PostgreSQL connection setup
+├── middleware/       # JWT verification middleware
+├── routes/           # Auth endpoints (register, login, logout, etc.)
+├── scripts/          # Shell and SQL scripts for DB setup
+├── server.js         # Backend entry point
+├── package.json      # Backend dependencies
 ```
 
-___
+### Frontend
+
+```
+frontend/
+├── src/
+│   ├── components/   # Reusable UI components
+│   ├── context/      # Auth state via React Context API
+│   ├── hooks/        # Custom hooks
+│   ├── pages/        # Public and protected pages
+│   ├── services/     # API interaction
+│   ├── App.jsx       # Root component
+│   └── main.jsx      # Frontend entry point
+├── index.html
+├── tailwind.config.js
+├── vite.config.js
+├── package.json
+```
 
 ---
 
 ## Features
 
-### Backend (Node.js + Express + MongoDB)
+### Backend (Node.js + Express + PostgreSQL)
 - User authentication (JWT access + refresh tokens)
 - Protected routes with middleware
-- MongoDB integration using Mongoose
+- PostgreSQL integration using `pg` and SQL queries
 - Secure password hashing with bcrypt
 - Modular Express router for authentication endpoints
 
@@ -63,6 +62,32 @@ git clone https://github.com/your-username/authentication-system.git
 cd authentication-system
 ```
 
+### Database Setup (PostgreSQL)
+
+Ensure PostgreSQL is installed and running.
+
+1. Configure your `.env.database` with connection information. The `init_db.sh` sources `.env.database`, which should contain:
+
+   ```ini
+   DB_HOST=127.0.0.1
+   DB_PORT=5432
+   DB_PASSWORD=password
+   ```
+
+2. Run the initialisation script:
+
+   ```sh
+   cd backend/scripts
+   chmod +x init_db.sh
+   ./init_db.sh
+   ```
+
+3. Apply the schema:
+
+   ```sh
+   psql -h localhost -p 5432 -U auth_app_user -d auth_db -f schema.sql
+   ```
+
 ### Backend Setup
 
 ```sh
@@ -70,15 +95,22 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in the `backend/` directory:
+Create a `.env` file in the `backend/` directory with the following content:
 
 ```
-SERVER_PORT=your-server-port
-SERVER_IP=your-server-ip
-MONGO_URI=mongodb-connection-string
+SERVER_PORT=3000
+SERVER_IP=localhost
+
 ACCESS_TOKEN_SECRET=your-access-token-key
 REFRESH_TOKEN_SECRET=your-refresh-token-key
-FRONTEND_URI=your-frontend-uri
+FRONTEND_URI=http://localhost:5173
+
+# PostgreSQL
+PGHOST=your-db-host
+PGPORT=5432
+PGUSER=auth_app_user
+PGPASSWORD=your-password
+PGDATABASE=auth_db
 ```
 
 Run the backend:
@@ -137,11 +169,11 @@ ___
 
 ## Tech Stack
 
-| Stack          | Technologies                                     |
-| -------------- | ------------------------------------------------ |
-| **Backend**    | Node.js, Express, MongoDB, Mongoose, JWT, bcrypt |
-| **Frontend**   | React, Vite, Tailwind CSS, React Context API     |
-| **Deployment** | N/A (to be added)                                |
+| Stack          | Technologies                                  |
+| -------------- | --------------------------------------------- |
+| **Backend**    | Node.js, Express, PostgreSQL, pg, JWT, bcrypt |
+| **Frontend**   | React, Vite, Tailwind CSS, React Context API  |
+| **Deployment** | N/A (to be added)                             |
 
 ___
 
