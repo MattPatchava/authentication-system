@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 
 const verifyAccessToken = require('../../middleware/verifyAccessToken.js');
-const User = require('../../models/User.js');
+
+const pool = require('../../config/postgres.js');
 
 router.get('/', verifyAccessToken, async (req, res, next) => {
     try {
-        const user = await User.findById(req.user);
+        const response = await pool.query(
+            'SELECT * FROM users WHERE id = $1',
+            [req.user]
+        );
+        const user = response.rows[0];
         console.log(user);
         res.status(200).json(user);
     } catch (error) {
