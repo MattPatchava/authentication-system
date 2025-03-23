@@ -14,14 +14,13 @@ const pool = require('./config/postgres.js');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swaggerConfig.js');
-console.log('Swagger paths:', swaggerSpec.paths);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
 app.use(cookieParser());
 
-const authRoutes = require('./routes/auth/authRouter.js');
-app.use('/auth', authRoutes);
+const router = require('./routes/router.js');
+app.use('/', router);
 
 const PORT = process.env.SERVER_PORT;
 const INTERFACE = process.env.SERVER_IP;

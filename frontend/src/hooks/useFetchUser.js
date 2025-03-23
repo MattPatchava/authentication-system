@@ -25,7 +25,7 @@ export function useFetchUser(redirectOnLogout = false) {
 
             async function fetchUser(newAccessToken) {
                 const user = await axios.get(
-                    import.meta.env.VITE_API_BASE_URL + '/auth/profile',
+                    import.meta.env.VITE_API_BASE_URL + '/user/profile',
                     {
                         headers: {
                             "Authorization": `Bearer ${newAccessToken}`

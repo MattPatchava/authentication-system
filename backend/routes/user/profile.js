@@ -7,7 +7,7 @@ const pool = require('../../config/postgres.js');
 
 /**
  * @swagger
- * /auth/profile:
+ * /user/profile:
  *   get:
  *     summary: Get user profile
  *     description: Returns the authenticated user's profile.
