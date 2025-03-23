@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router()
 
 const bcrypt = require('bcryptjs');
-const User = require('../../models/User.js');
+const pool = require('../../config/postgres.js');
 
 router.post('/', async (req, res, next) => {
 
     try {
+        console.log('GET received');
 
         // Get request body fields
         let { email, password, firstName, lastName } = req.body;
@@ -27,25 +28,28 @@ router.post('/', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user
-        const user = new User({
-            email: email,
-            password: hashedPassword,
-            firstName: firstName,
-            lastName: lastName
-        });
-        const savedDocument = await user.save();
+        const user = await pool.query(
+            'INSERT INTO users (email, password_hash, first_name, last_name) VALUES ($1, $2, $3, $4) RETURNING *',
+            [email, hashedPassword, firstName, lastName]
+        );
         // Send 201 confirmation
+        console.log(user.rows);
         res.status(201).json({ message: "New user created" });
 
     } catch (error) {
-
         console.error(error.message);
-
-        if (error.code === 11000)
-            return res.status(400).json({ message: "User already exists" });
-
         next(error);
     }
+});
+
+// PostgreSQL error code handler
+router.use((err, req, res, next) => {
+    if (err.code === '23505')
+        return res.status(409).json({ message: "Email already exists." });
+    else if (err.code === '23502')
+        return res.status(400).json({ message: `Missing required field: ${err.column}` });
+    else
+        next(err);
 });
 
 // Final catch-all error handler

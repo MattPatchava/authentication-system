@@ -22,7 +22,7 @@ function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     
     const navigate = useNavigate();
@@ -30,8 +30,17 @@ function RegisterForm() {
     async function handleRegister(e) {
         e.preventDefault();
 
+        if (!email || !password || !confirmPassword || !firstName || !lastName) {
+            setErrorMessage('All fields are required.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setErrorMessage('Passwords do not match.');
+            return;
+        }
+
         setLoading(true);
-        setError('');
+        setErrorMessage('');
         setSuccessMessage('');
 
         try {
@@ -42,12 +51,14 @@ function RegisterForm() {
                 setTimeout(() => {
                     navigate('/login', { state: { message: "Registration successful! Please login." } });
                 }, 2000);
-            } else {
-                console.log(response);
-                throw new Error('Invalid submission');
             }
         } catch (error) {
-            setError(`Registration failed. Try again.`)
+            if (error.status === 409)
+                setErrorMessage('Email already exists.');
+            else if (error.status === 500)
+                setErrorMessage('Server error. Try again later.');
+            else
+                setErrorMessage(`Registration failed. Try again.`)
             console.error(`Registration error: `, error);
         } finally {
             setLoading(false);
@@ -75,7 +86,10 @@ function RegisterForm() {
             >
                 {loading ? "Submitting data..." : "Register"}
             </button>
+
             {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
             <p style={{ margin: "0" }}>Already have an account? <Link to="/login" className="text-blue-500 underline hover:text-blue-700">Login here.</Link></p>
         </form>
     );

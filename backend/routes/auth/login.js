@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const bcrypt = require('bcryptjs');
-const User = require('../../models/User.js');
-
 const jwt = require('jsonwebtoken');
+
+const pool = require('../../config/postgres.js');
 
 router.post('/', async (req, res, next) => {
     try {
@@ -13,7 +13,9 @@ router.post('/', async (req, res, next) => {
         if (!email || !password)
             return res.status(400).json({ message: "Email and/or password not provided" });
 
-        const user = await User.findOne({ email: email });
+        const response = await pool.query('SELECT * FROM users WHERE email = $1',
+        [email]);
+        const user = response.rows[0];
         if (!user)
             return res.status(404).json({ message: "User not found" });
 
@@ -25,13 +27,13 @@ router.post('/', async (req, res, next) => {
         // Valid credentials received
 
         const accessToken = jwt.sign(
-            { userId: user._id },
+            { userId: user.id },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "15m" }
         );
 
         const refreshToken = jwt.sign(
-            { userId: user._id },
+            { userId: user.id },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: "7d" }
         );
@@ -42,7 +44,6 @@ router.post('/', async (req, res, next) => {
 //            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
             secure: true,
             sameSite: "None",
-            domain: 'localhost',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -61,7 +62,7 @@ router.post('/', async (req, res, next) => {
 });
 
 const isValidCredentials = async (password, user) => {
-    return await bcrypt.compare(password, user.password);
+    return await bcrypt.compare(password, user.password_hash);
 };
 
 router.use((err, req, res, next) => {

@@ -31,7 +31,7 @@ function Dashboard() {
         <div>
             <Header />
             <div className="m-4">
-                {loading ? <p>Loading...</p> : user ? <h1 className="text-5xl font-bold text-gray-800 text-center drop-shadow-lg">Welcome, {user.firstName}!</h1> : <p>User not found.</p>}
+                {loading ? <p>Loading...</p> : user ? <h1 className="text-5xl font-bold text-gray-800 text-center drop-shadow-lg">Welcome, {user.first_name}!</h1> : <p>User not found.</p>}
             </div>
         </div>
     );

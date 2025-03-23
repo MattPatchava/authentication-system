@@ -10,8 +10,7 @@ app.use(cors({
     credentials: true,
 }));
 
-const connectToDB = require('./config/db.js');
-connectToDB();
+const pool = require('./config/postgres.js');
 
 app.use(express.json());
 app.use(cookieParser());
