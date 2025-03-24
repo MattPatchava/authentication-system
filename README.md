@@ -126,7 +126,7 @@ cd ../frontend
 npm install
 ```
 
-Create a `.env` file in the `frontend/` directory:
+Create a `.env.development` file in the `frontend/` directory:
 
 ```
 VITE_API_BASE_URL=your-backend-url
