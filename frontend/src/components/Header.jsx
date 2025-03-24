@@ -4,9 +4,7 @@ import { AuthContext } from '../context/AuthContext.jsx';
 import { useFetchUser } from '../hooks/useFetchUser.js';
 
 function Header() {
-    const { accessToken, setAccessToken, login, logout, user } = useContext(AuthContext);
-
-    const { loading } = useFetchUser(false);
+    const { accessToken, setAccessToken, isAuthenticated, login, logout, user } = useContext(AuthContext);
 
     const loggedOutHeading = "🔒 Authentication System 🔒";
     const loggedInHeading = "🔓 Authentication System 🔓";
@@ -18,7 +16,7 @@ function Header() {
           </div>
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
-            {loading ? <p>Loading...</p> : user ? <LoggedInLinks /> : <LoggedOutLinks />}
+            {isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />}
             </ul>
           </div>
         </div>

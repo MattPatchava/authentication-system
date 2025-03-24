@@ -20,6 +20,7 @@ function CredentialsForm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { accessToken, login, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -39,6 +40,9 @@ function CredentialsForm() {
         try {
             const response = await login(email, password);
             clearTimeout(timeoutId);
+            setLoading(false);
+        
+            navigate('/dashboard', { state: { message: "Logged in successfully." } });
         } catch (error) {
             clearTimeout(timeoutId);
 
@@ -64,17 +68,6 @@ function CredentialsForm() {
         if (location.state?.message)
             setStateMessage(location.state.message);
     }, [location]);
-
-    const navigate = useNavigate();
-    
-    useEffect(() => {
-        if (accessToken) {
-            setTimeout(() => {
-                setLoading(false);
-                navigate('/dashboard', { state: { message: "Logged in successfully." } });
-            }, 750);
-        }
-    }, [accessToken]);
 
     return (
         <form 
