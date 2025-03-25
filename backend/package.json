@@ -7,7 +7,8 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node server.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -19,5 +20,11 @@
     "pg": "^8.14.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.13.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
