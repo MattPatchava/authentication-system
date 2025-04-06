@@ -19,7 +19,7 @@ function CredentialsForm() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const { accessToken, login, logout } = useContext(AuthContext);
+    const { accessToken, keepLoggedIn, setKeepLoggedIn, login, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -38,7 +38,7 @@ function CredentialsForm() {
         }, 2000);
 
         try {
-            const response = await login(email, password);
+            const response = await login(email, password, keepLoggedIn);
             clearTimeout(timeoutId);
             setLoading(false);
         
@@ -101,6 +101,15 @@ function CredentialsForm() {
             </button>
 
             {error && <p style={{ color: "red", margin: "0" }}>{error}</p>}
+
+            <label className="fieldset-label">
+                <input
+                    type="checkbox"
+                    checked={keepLoggedIn}
+                    onChange={() => setKeepLoggedIn(!keepLoggedIn)}
+                    className="checkbox" />
+            Remember me
+            </label>
 
             <p style={{ margin: "0" }}>
                 Don't have an account? <Link to="/register" className="text-blue-500 underline hover:text-blue-700">Register here.</Link>

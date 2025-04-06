@@ -11,11 +11,16 @@ export function useFetchUser(redirectOnLogout = false) {
     useEffect(() => {
         async function fetchData() {
 
-            async function refreshAccessToken() {
+            async function refreshTokens() {
+                const sessionRefreshToken = sessionStorage.getItem("refreshToken");
+                console.log("Session token:", sessionRefreshToken);
+
                 const response = await axios.post(
                     import.meta.env.VITE_API_BASE_URL + '/auth/refresh',
                     {},
-                    { withCredentials: true }
+                    sessionRefreshToken
+                    ? { headers: { Authorization: `Bearer ${sessionRefreshToken}` } }
+                    : { withCredentials: true }
                 );
 
                 const newToken = response.data.accessToken;
@@ -44,7 +49,7 @@ export function useFetchUser(redirectOnLogout = false) {
             }
 
             try {
-                if (!accessToken) await refreshAccessToken();
+                if (!accessToken) await refreshTokens();
                 else await fetchUser(accessToken);
                 setLoading(false);
             } catch (error) {
