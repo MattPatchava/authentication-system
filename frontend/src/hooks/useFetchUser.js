@@ -13,7 +13,6 @@ export function useFetchUser(redirectOnLogout = false) {
 
             async function refreshTokens() {
                 const sessionRefreshToken = sessionStorage.getItem("refreshToken");
-                console.log("Session token:", sessionRefreshToken);
 
                 const response = await axios.post(
                     import.meta.env.VITE_API_BASE_URL + '/auth/refresh',
@@ -23,9 +22,13 @@ export function useFetchUser(redirectOnLogout = false) {
                     : { withCredentials: true }
                 );
 
-                const newToken = response.data.accessToken;
-                setAccessToken(newToken);
-                await fetchUser(newToken);
+                if (response.data.refreshToken)
+                    sessionStorage.setItem("refreshToken", response.data.refreshToken);
+
+                const newAccessToken = response.data?.accessToken;
+                setAccessToken(newAccessToken);
+
+                await fetchUser(newAccessToken);
             }
 
             async function fetchUser(newAccessToken) {
