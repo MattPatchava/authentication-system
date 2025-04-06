@@ -66,7 +66,7 @@ const pool = require('../../config/postgres.js');
  */
 router.post('/', async (req, res, next) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, keepLoggedIn } = req.body;
 
         if (!email || !password)
             return res.status(400).json({ message: "Email and/or password not provided" });
@@ -93,26 +93,31 @@ router.post('/', async (req, res, next) => {
         const refreshToken = jwt.sign(
             { userId: user.id },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: keepLoggedIn ? "1w" : "15m" }
         );
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-//            secure: process.env.NODE_ENV === "production",
-//            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-            secure: true,
-            sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-
-        res
-            .status(200)
-            .json({
-                message: "Login successful",
-                accessToken
-            });
-
-
+        if (keepLoggedIn) {
+            res
+                .cookie("refreshToken", refreshToken, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "None",
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                })
+                .status(200)
+                .json({
+                    accessToken,
+                    message: "Login successful",
+                });
+        } else {
+            res
+                .status(200)
+                .json({
+                    refreshToken,
+                    accessToken,
+                    message: "Login successful",
+                });
+        }
     } catch (error) {
         console.error(error.message);
         next(error);

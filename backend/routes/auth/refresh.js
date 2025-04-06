@@ -20,7 +20,16 @@ const jwt = require('jsonwebtoken');
  */
 router.post('/', async (req, res, next) => {
     try {
-        const refreshToken = req.cookies.refreshToken;
+        console.log("Token:", req.cookies?.refreshToken || req.headers?.authorization || null);
+        const cookieRefreshToken = req.cookies?.refreshToken || null;
+        const authHeader  = req.headers?.authorization || null;
+
+        if (cookieRefreshToken && authHeader)
+            res.status(400).json({ message: "Multiple token sources provided" });
+
+        const refreshToken = cookieRefreshToken || (authHeader?.startsWith("Bearer ") ? authHeader.split(' ')[1] : null);
+
+        const keepLoggedIn = req.body?.keepLoggedIn;
 
         if (!refreshToken)
             return res.status(401).json({ message: "No refresh token provided" });
@@ -33,9 +42,32 @@ router.post('/', async (req, res, next) => {
             { expiresIn: "15m" }
         );
 
-        return res
-            .status(200)
-            .json({ accessToken: newAccessToken });
+        const newRefreshToken = jwt.sign(
+            { userId: decoded.userId },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: keepLoggedIn ? "1w" : "15m" }
+        );
+
+
+        if (keepLoggedIn) {
+            res
+                .cookie(
+                    "refreshToken",
+                    newRefreshToken,
+                {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "None",
+                    maxAge: 60 * 60 * 24 * 7 * 1000,
+                })
+                .status(200)
+                .json({ accessToken: newAccessToken });
+        } else {
+            res
+                .status(200)
+                .json({ accessToken: newAccessToken, newRefreshToken });
+                
+        }
             
     } catch (error) {
         console.error(error.message);
