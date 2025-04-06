@@ -25,11 +25,10 @@ router.post('/', async (req, res, next) => {
         const authHeader  = req.headers?.authorization || null;
 
         if (cookieRefreshToken && authHeader)
-            res.status(400).json({ message: "Multiple token sources provided" });
+            return res.status(400).json({ message: "Multiple token sources provided" });
 
         const refreshToken = cookieRefreshToken || (authHeader?.startsWith("Bearer ") ? authHeader.split(' ')[1] : null);
-
-        const keepLoggedIn = req.body?.keepLoggedIn;
+        const keepLoggedIn = cookieRefreshToken;
 
         if (!refreshToken)
             return res.status(401).json({ message: "No refresh token provided" });
@@ -65,7 +64,7 @@ router.post('/', async (req, res, next) => {
         } else {
             res
                 .status(200)
-                .json({ accessToken: newAccessToken, newRefreshToken });
+                .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
                 
         }
             
